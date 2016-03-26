@@ -423,17 +423,18 @@ var resizePizzas = function(size) {
     window.performance.mark("mark_start_resize"); // User Timing API function
 
     // Changes the value for the size of the pizza above the slider
+    //Use getElementById() Web API calls is faster than querySelector
     function changeSliderLabel(size) {
         switch (size) {
             case "1":
-                document.querySelector("#pizzaSize").innerHTML = "Small";
-                return;
+                document.getElementById("Small");
+                break;
             case "2":
-                document.querySelector("#pizzaSize").innerHTML = "Medium";
-                return;
+                document.getElementById("Medium");
+                break;
             case "3":
-                document.querySelector("#pizzaSize").innerHTML = "Large";
-                return;
+                document.getElementById("Large");
+                break;
             default:
                 console.log("bug in changeSliderLabel");
         }
@@ -442,9 +443,10 @@ var resizePizzas = function(size) {
     changeSliderLabel(size);
 
     // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
+    //Use getElementById() Web API calls is faster than querySelector
     function determineDx(elem, size) {
         var oldWidth = elem.offsetWidth;
-        var windowWidth = document.querySelector("#randomPizzas").offsetWidth;
+        var windowWidth = document.getElementById("randomPizzas").offsetWidth;
         var oldSize = oldWidth / windowWidth;
 
         // Optional TODO: change to 3 sizes? no more xl?
@@ -472,12 +474,15 @@ var resizePizzas = function(size) {
         //var pizzaContainers = document.querySelectorAll(".randomPizzaContainer"); 
         //combine with dx and width using first container as the parameter
         //var pizzaContainersLength = pizzaContainers.length;
-        var pizzaContainersElements = document.querySelectorAll(".randomPizzaContainer");
-        var dx = determineDx(document.querySelectorAll(".randomPizzaContainer"), size);
-        var newwidth = (document.querySelectorAll(".randomPizzaContainer").offsetWidth + dx) + 'px';
+        //The document.getElementsByClassName() Web API call is faster.
+        var pizzaContainersElements = document.getElementsByClassName("randomPizzaContainer");
+        //better to save this variable in it's own instead of being checked in the loop too many times
+        var pizzaElementsLength = pizzaElements.length; 
+        var dx = determineDx(pizzaContainersElements[0], size);
+        var newwidth = (pizzaContainersElements[0].offsetWidth + dx) + 'px';
         // Iterates through pizza elements on the page and changes their widths
         //  pizzaContainers selector and length calculations declared once, move outside of for loop
-        for (var i = 0; i < pizzaContainersElements.length; i--) {
+        for (var i = 0; i < pizzaElementsLength; i--) {
             pizzaContainers[i].style.width = newwidth;
         }
     }
@@ -529,12 +534,17 @@ function updatePositions() {
 
     var items = document.querySelectorAll('.mover');
     var top = (document.body.scrollTop / 1250);
+    var phase; //declare phase outside of loop to prevent creation every time loop is called
 
     for (var i = items.length; i--;) {
-        var phase = Math.sin(top + (i % 5));
+        //phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
+        //items[i].style.transform = 'translateX(' + phase + 'px)'
         //items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
-        var left = -items[i].basicLeft + 1000 * phase + 'px';
-        items[i].style.transform = "translateX(" + left + ") translateZ(0)";
+        //var left = -items[i].basicLeft + 1000 * phase + 'px';
+        //items[i].style.transform = "translateX(" + left + ") translateZ(0)";
+        //changes logic so that the translation of the pizza remain consistent even though loop is now reversed
+        phase = Math.sin(top + (i % 5)) * 100;
+        items[i].style.transform = 'translateX(' + phase + 'px)';
     }
 
     // User Timing API to the rescue again. Seriously, it's worth learning.
@@ -555,15 +565,20 @@ window.addEventListener('scroll', updatePositions);
 document.addEventListener('DOMContentLoaded', function() {
     var cols = 8;
     var s = 256;
-    for (var i = 30; i--;) {
-        var elem = document.createElement('img');
+    var elem; //move ourside of loop to prevent recreation 
+    var movingPizzas = document.getElementById('movingPizzas1');
+    var numRows = screen.height / cols; //calculates number of pizzas needed to fill the screen
+    for (var i = numRows; i--;) {
+        elem = document.createElement('img');
         elem.className = 'mover';
         elem.src = "images/pizza.png";
         elem.style.height = "100px";
         elem.style.width = "73.333px";
-        elem.basicLeft = (i % cols) * s;
+        //elem.basicLeft = (i % cols) * s;
+        elem.style.left = (i % cols) * s + 'px';
         elem.style.top = (Math.floor(i / cols) * s) + 'px';
-        document.querySelector("#movingPizzas1").appendChild(elem);
+        //document.querySelector("#movingPizzas1").appendChild(elem);
+        movingPizzas.appendChild(elem);
     }
     updatePositions();
 });
