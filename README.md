@@ -22,7 +22,7 @@ Src folder contains the original source files unmodified
 3) Computation efficienty for pizza.html
   * Resize pizza to less then 5ms 
   * The file that contains all the changes is src/views/js/main.js and src/views/css/style.css
-  1) In style.css file change the .mover width to 100px to optimize the width of the mover
+  1) In style.css file change the .mover width to 100px to optimize the width of the mover, add backface-visibility to hidden      also to optimize 
   2) main.js function changePizzaSizes
     a) Remove variables pizzaContainers and pizzaContainerslength because they are no longer necessary 
     b) declare a new variable pizzaContainersElements, change dx and newWidth to use only the first instance of     
@@ -35,7 +35,10 @@ Src folder contains the original source files unmodified
     d) function updatePositions(), move var phase outside of loop, change phase and item logic when reversing loop to mimic  
        correct pizza phasing, change elem.basicLeft to elem.styleLeft to match the logic in the function
     e) declare a new variable numRows to calculate screen.height divided by number of cols to determine number of pizzas used       to fill screen during scroll
+    f) Fix logic in function changePizzaSizes, set pizzaElementsLength to the container length which 
+      pizzaContainersElements.length, fix logic in for loop for pizzaContainersElements
 
 4)Comments are included in all the necessary files
+
 5)This is the readme file that includes all the optimizations
 
