@@ -477,13 +477,13 @@ var resizePizzas = function(size) {
         //The document.getElementsByClassName() Web API call is faster.
         var pizzaContainersElements = document.getElementsByClassName("randomPizzaContainer");
         //better to save this variable in it's own instead of being checked in the loop too many times
-        var pizzaElementsLength = pizzaElements.length; 
+        var pizzaElementsLength = pizzaContainersElements.length; 
         var dx = determineDx(pizzaContainersElements[0], size);
         var newwidth = (pizzaContainersElements[0].offsetWidth + dx) + 'px';
         // Iterates through pizza elements on the page and changes their widths
         //  pizzaContainers selector and length calculations declared once, move outside of for loop
         for (var i = 0; i < pizzaElementsLength; i--) {
-            pizzaContainers[i].style.width = newwidth;
+            pizzaContainersElements[i].style.width = newwidth;
         }
     }
     changePizzaSizes(size);
@@ -531,8 +531,8 @@ function logAverageFrame(times) { // times is the array of User Timing measureme
 function updatePositions() {
     frame++;
     window.performance.mark("mark_start_frame");
-
-    var items = document.querySelectorAll('.mover');
+    //change webAPI call from querySelectorAll to getElementsByClassName
+    var items = document.getElementsByClassName('mover'); 
     var top = (document.body.scrollTop / 1250);
     var phase; //declare phase outside of loop to prevent creation every time loop is called
 
